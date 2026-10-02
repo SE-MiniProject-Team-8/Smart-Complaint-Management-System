@@ -1,0 +1,40 @@
+@startuml
+title SD02 Single Appeal and Dean Final Review
+actor Student
+boundary Browser as UI
+control "Flask API and AuthService" as API
+control ComplaintService as C
+control RoutingPolicy as R
+database "SQLite Repository" as DB
+Student -> UI: Submit appeal
+UI -> API: POST /api/v1/complaints/{id}/appeals
+API -> API: Validate session, Student role, CSRF and input
+API -> C: appeal(actor, id, justification, version)
+C -> DB: Read complaint and rejecting level
+DB --> C: Owner, status, appealed and version
+break Access, eligibility or version failure
+C --> API: 404 ownership or 409 state/version
+API --> UI: Error, no mutation
+end
+C -> R: appealTarget(rejectedLevel)
+alt Rejected at L1 or L2
+R --> C: Next level, final_review=false
+else Rejected at Dean
+R --> C: Dean, final_review=true
+end
+critical One SQLite transaction
+C -> DB: Insert unique appeal
+Conditional update of Rejected and not appealed
+Set Under Appeal Review, increment version
+C -> DB: Record assignment history, APPEAL audit and notification
+DB --> C: Transaction result, commit or error
+end
+break Concurrent update or persistence error
+DB --> C: ROLLBACK
+C --> API: 409 conflict or 503 persistence failure
+API --> UI: Error, no partial mutation
+end
+C --> API: Appeal ID and assignment
+API --> UI: 201 Created
+UI --> Student: Appeal confirmation
+@enduml

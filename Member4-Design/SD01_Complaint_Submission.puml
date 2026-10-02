@@ -1,0 +1,36 @@
+@startuml
+title SD01 Complaint Submission and Severity Routing
+actor Student
+boundary "Browser" as UI
+control "Flask API and AuthService" as API
+control ComplaintService as C
+control RoutingPolicy as R
+database "SQLite Repository" as DB
+Student -> UI: Submit complaint
+UI -> API: POST /api/v1/complaints
+API -> API: Validate session, Student role, CSRF and fields
+break Invalid session or input
+API --> UI: 401 / 403 / 422, no writes
+end
+API -> C: submitComplaint(actor, input)
+C -> R: initialLevel(severity)
+alt Low or Medium
+R --> C: L1 Faculty-in-Charge
+else High
+R --> C: L2 Grievance Committee
+end
+critical One SQLite transaction
+C -> DB: Create complaint and assignment history
+C -> DB: Append SUBMIT and ASSIGN audit entries
+Create in-app assignment notification
+DB --> C: Transaction result, commit or error
+end
+break Persistence failure
+DB --> C: ROLLBACK and database error
+C --> API: 503, no success confirmation
+API --> UI: 503, no success confirmation
+end
+C --> API: Persisted complaint representation
+API --> UI: 201 Created and Location
+UI --> Student: Complaint confirmation
+@enduml
