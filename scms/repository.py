@@ -82,6 +82,8 @@ def update_complaint_state(conn, complaint_id, expected_version, now, **fields):
 def list_complaints(conn, where_sql, params, page, page_size):
     """`where_sql` is built only from fixed fragments in queries.py, never user text."""
     total = conn.execute(f"SELECT COUNT(*) FROM complaints WHERE {where_sql}", params).fetchone()[0]
+    if total == 0:
+        return [], 0
     rows = conn.execute(
         f"SELECT * FROM complaints WHERE {where_sql}"
         " ORDER BY submitted_at DESC, complaint_id DESC LIMIT ? OFFSET ?",
@@ -90,7 +92,14 @@ def list_complaints(conn, where_sql, params, page, page_size):
     return rows, total
 
 
-def list_overdue_candidates(conn):
+def list_overdue_candidates(conn, cutoff=None):
+    if cutoff is not None:
+        return conn.execute(
+            "SELECT * FROM complaints WHERE status NOT IN ('Resolved', 'Rejected')"
+            " AND status_updated_at < ?"
+            " ORDER BY status_updated_at ASC, complaint_id ASC",
+            (cutoff,),
+        ).fetchall()
     return conn.execute(
         "SELECT * FROM complaints WHERE status NOT IN ('Resolved', 'Rejected')"
         " ORDER BY status_updated_at ASC, complaint_id ASC"
@@ -144,6 +153,8 @@ def insert_audit(conn, complaint_id, actor_id, action, previous_status, new_stat
 def list_audit(conn, complaint_id, page, page_size):
     total = conn.execute("SELECT COUNT(*) FROM audit_logs WHERE complaint_id = ?",
                          (complaint_id,)).fetchone()[0]
+    if total == 0:
+        return [], 0
     rows = conn.execute(
         "SELECT * FROM audit_logs WHERE complaint_id = ?"
         " ORDER BY timestamp ASC, audit_id ASC LIMIT ? OFFSET ?",
@@ -165,6 +176,8 @@ def insert_notification(conn, complaint_id, target_level, event, created_at):
 def list_notifications(conn, target_level, page, page_size):
     total = conn.execute("SELECT COUNT(*) FROM notifications WHERE target_level = ?",
                          (target_level,)).fetchone()[0]
+    if total == 0:
+        return [], 0
     rows = conn.execute(
         "SELECT notification_id, complaint_id, event, created_at FROM notifications"
         " WHERE target_level = ? ORDER BY created_at DESC, notification_id DESC LIMIT ? OFFSET ?",

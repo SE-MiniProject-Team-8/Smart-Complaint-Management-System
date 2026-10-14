@@ -3,7 +3,7 @@
 Reads use role-scoped filters (REQ-7.x). SLA review is manual and
 permission-protected (REQ-8.x); no background scheduler exists.
 """
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from . import auth, routing
 from . import repository as repo
@@ -62,8 +62,9 @@ def sla_check(conn, actor, now=None):
     auth.require_sla_review(actor)
     now = now or datetime.now(timezone.utc)
     threshold = _threshold_days(conn)
+    cutoff = (now - timedelta(days=threshold)).strftime("%Y-%m-%dT%H:%M:%SZ")
     items = []
-    for c in repo.list_overdue_candidates(conn):
+    for c in repo.list_overdue_candidates(conn, cutoff=cutoff):
         elapsed = _elapsed_days(c["status_updated_at"], now)
         if elapsed > threshold:
             items.append({
