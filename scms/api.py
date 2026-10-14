@@ -52,7 +52,9 @@ def body(optional=False):
 
 
 def current_actor():
-    return auth.require_actor(get_db(), g.session_row)
+    if "actor" not in g:
+        g.actor = auth.require_actor(get_db(), g.session_row)
+    return g.actor
 
 
 @bp.before_request

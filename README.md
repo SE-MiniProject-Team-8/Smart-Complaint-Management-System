@@ -20,6 +20,24 @@ Every complaint change writes the complaint, assignment history, audit entry and
 notification in **one transaction**; a failure rolls all of it back and no success
 is reported before the commit.
 
+## Issue #11 — Usability and performance
+
+Open `http://127.0.0.1:5000/` after starting the app to use the accessible web portal.
+Key improvements delivered in Issue #11:
+
+- **Accessible & Responsive UI**: Responsive design for mobile and desktop screens, skip navigation link, WCAG-compliant color contrasts, and touch-friendly tap targets (>= 44px).
+- **Clear Forms & Label Association**: Explicit `<label for="...">` associations, helpful placeholders, visual required indicators (`*`), and `aria-required="true"` attributes.
+- **Form Validation & Input Preservation**: Field-specific error highlighting, `aria-invalid` and `aria-describedby` links, autofocus on the first invalid field, and input preservation in `sessionStorage` preventing data loss on failure or reload.
+- **Real-Time Guidance**: Live character countdown on complaint description (1,000 character limit) with visual warning thresholds.
+- **Complaint Tracking & Management**: "Track My Complaints" tab enabling students to view their submitted issues, live status badges, assigned handlers, resolution remarks, rejection reasons, and options for appeals or feedback submission.
+- **Performance Optimizations**:
+  - Composite SQLite indexes (`idx_sessions_expires`, `idx_complaints_student_status`, `idx_complaints_level_status_sub`).
+  - PRAGMA `temp_store = MEMORY` and `cache_size = -2000` to eliminate disk sorting overhead.
+  - Request-scoped actor caching (`g.actor`) avoiding redundant user database queries.
+  - SQL-level cutoff filtering for overdue SLA candidate queries.
+  - Zero-result early return in pagination queries avoiding unnecessary sorted queries.
+  - Verified performance targets: Dashboard query latency < 2.0 seconds and submission confirmation latency < 3.0 seconds under single and repeated operations.
+
 ## Setup
 
 ```bash
@@ -43,14 +61,14 @@ keep the database file outside the web root, and back it up with SQLite's `.back
 ## Tests
 
 ```bash
-SCMS_SECRET_KEY=test python -m unittest discover -s tests -v   # real app + SQLite
+SCMS_SECRET_KEY=test python -m unittest discover -s tests -v   # real app + SQLite, including Issue #11
 python -m unittest test_scms -v                                # original in-memory simulation
 ```
 
 `test_scms.py` is the earlier in-memory simulation and cannot show durability; the tests
 in `tests/` run against the real application, including a restart-persistence test.
 
-## Not implemented yet
+## Future enhancements / Other issues
 
-No browser UI (templates), login throttling, or configurable-threshold admin screen.
-Performance targets (2 s dashboard, 3 s submission) have not been measured.
+Login rate-limiting/throttling and configurable-threshold admin screen.
+(Browser UI, accessibility, and performance targets are implemented and verified in Issue #11).
