@@ -1,1 +1,8 @@
 *.pdf
+__pycache__/
+*.pyc
+instance/
+*.db
+*.db-wal
+*.db-shm
+.venv/
