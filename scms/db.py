@@ -22,6 +22,8 @@ def connect(database_path):
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
     conn.execute(f"PRAGMA busy_timeout = {BUSY_TIMEOUT_SECONDS * 1000}")
+    conn.execute("PRAGMA temp_store = MEMORY")
+    conn.execute("PRAGMA cache_size = -2000")
     if str(database_path) != ":memory:":
         conn.execute("PRAGMA journal_mode = WAL")
         conn.execute("PRAGMA synchronous = FULL")  # durable commits

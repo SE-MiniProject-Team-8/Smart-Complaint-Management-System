@@ -112,3 +112,6 @@ CREATE INDEX IF NOT EXISTS idx_complaints_status_time ON complaints(status, stat
 CREATE INDEX IF NOT EXISTS idx_assignment_complaint   ON assignment_history(complaint_id, level);
 CREATE INDEX IF NOT EXISTS idx_audit_complaint        ON audit_logs(complaint_id, timestamp, audit_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_level    ON notifications(target_level, created_at);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires       ON sessions(expires_at);
+CREATE INDEX IF NOT EXISTS idx_complaints_student_status   ON complaints(student_id, status, submitted_at DESC);
+CREATE INDEX IF NOT EXISTS idx_complaints_level_status_sub ON complaints(current_level, status, submitted_at DESC);
