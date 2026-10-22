@@ -86,12 +86,14 @@ def session_info():
     if row is None:
         session_id, csrf = auth.create_session(get_db())
         session["sid"] = session_id
-        return ok({"authenticated": False, "user_id": None, "role": None, "csrf_token": csrf})
-    if row["user_id"] is None:
         return ok({"authenticated": False, "user_id": None, "role": None,
+                   "can_review_sla": False, "csrf_token": csrf})
+    if row["user_id"] is None:
+        return ok({"authenticated": False, "user_id": None, "role": None, "can_review_sla": False,
                    "csrf_token": row["csrf_token"]})
     actor = current_actor()
     return ok({"authenticated": True, "user_id": actor.user_id, "role": actor.role,
+               "university_id": actor.university_id, "can_review_sla": auth.can_review_sla(actor),
                "csrf_token": row["csrf_token"]})
 
 
@@ -101,7 +103,10 @@ def login():
     user, session_id, csrf = auth.login(get_db(), session.get("sid"),
                                         data.get("university_id"), data.get("password"))
     session["sid"] = session_id
-    return ok({"user_id": user["user_id"], "role": user["role"], "csrf_token": csrf})
+    return ok({"user_id": user["user_id"], "role": user["role"],
+               "university_id": user["university_id"],
+               "can_review_sla": user["role"] == "Dean" and bool(user["sla_review"]),
+               "csrf_token": csrf})
 
 
 @bp.delete("/session")
