@@ -6,6 +6,7 @@ import os
 import shutil
 import sqlite3
 import tempfile
+import time
 import unittest
 from datetime import datetime, timedelta, timezone
 from unittest import mock
@@ -643,6 +644,126 @@ class ApiConventionTests(Base):
     def test_secret_key_is_required(self):
         with self.assertRaises(RuntimeError):
             create_app({"DATABASE": os.path.join(self.tmp, "other.db"), "SECRET_KEY": None})
+
+
+class Issue11UsabilityPerformanceTests(Base):
+    """Issue #11: clear field feedback, usability, and performance targets."""
+
+    def test_browser_form_has_clear_labels_and_field_specific_errors(self):
+        page = self.app.test_client().get("/")
+        self.assertEqual(page.status_code, 200)
+        for label in (b"University ID", b"Complaint category",
+                      b"Describe the complaint", b"Severity",
+                      b"Submit complaint"):
+            self.assertIn(label, page.data)
+
+        # The real API reports errors keyed to the specific fields, with readable messages.
+        response = self.alice.post("/complaints", {
+            "category": "", "description": "", "severity": "Urgent"
+        })
+        self.assertEqual(response.status_code, 422)
+        fields = response.json["error"]["fields"]
+        self.assertEqual(fields["category"], "Complaint category is required.")
+        self.assertEqual(fields["description"], "Complaint description is required.")
+        self.assertEqual(fields["severity"], "Severity must be Low, Medium, or High.")
+
+    def test_valid_complaint_is_confirmed_within_three_seconds(self):
+        started = time.perf_counter()
+        response = self.alice.post("/complaints", {
+            "category": "Facilities",
+            "description": "The fan in classroom 101 is not working.",
+            "severity": "Low",
+        })
+        elapsed = time.perf_counter() - started
+        self.assertEqual(response.status_code, 201, response.json)
+        self.assertIn("complaint_id", response.json["data"])
+        self.assertLess(elapsed, 3.0, f"Submission took {elapsed:.3f}s (target < 3s)")
+
+    def test_browser_page_structure_accessibility_and_responsiveness(self):
+        page = self.app.test_client().get("/")
+        self.assertEqual(page.status_code, 200)
+        content = page.data.decode("utf-8")
+
+        # Responsive viewport
+        self.assertIn('<meta name="viewport" content="width=device-width, initial-scale=1">', content)
+
+        # Accessible skip link and main landmark
+        self.assertIn('class="skip-link"', content)
+        self.assertIn('Skip to main content', content)
+        self.assertIn('id="main-content"', content)
+
+        # Form controls associated with labels
+        self.assertIn('for="category"', content)
+        self.assertIn('for="description"', content)
+        self.assertIn('for="severity"', content)
+        self.assertIn('placeholder=', content)
+
+        # Accessible attributes
+        self.assertIn('aria-required="true"', content)
+        self.assertIn('aria-describedby=', content)
+        self.assertIn('id="char-count"', content)
+
+        # Complaint tracking section
+        self.assertIn('id="tracking-card"', content)
+        self.assertIn('Track My Complaints', content)
+        self.assertIn('id="complaints-list"', content)
+
+    def test_dashboard_performance_target_under_two_seconds(self):
+        # NFR target: dashboard response completes well under 2.0s
+        started = time.perf_counter()
+        response = self.alice.get("/complaints?page=1&page_size=20")
+        elapsed = time.perf_counter() - started
+        self.assertEqual(response.status_code, 200)
+        self.assertLess(elapsed, 2.0, f"Dashboard query took {elapsed:.3f}s (target < 2s)")
+
+    def test_performance_indexes_exist(self):
+        conn = db.connect(self.db_path)
+        try:
+            indexes = {row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='index'").fetchall()}
+            self.assertIn("idx_sessions_expires", indexes)
+            self.assertIn("idx_complaints_student_status", indexes)
+            self.assertIn("idx_complaints_level_status_sub", indexes)
+        finally:
+            conn.close()
+
+    def test_empty_complaints_query_optimization(self):
+        # A new student with 0 complaints should get an empty page immediately without unnecessary processing
+        student2 = self.student("STU999", "Student Two")
+        started = time.perf_counter()
+        response = student2.get("/complaints?page=1&page_size=20")
+        elapsed = time.perf_counter() - started
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json["data"], [])
+        self.assertEqual(response.json["total"], 0)
+        self.assertLess(elapsed, 1.0)
+
+    def test_repeated_submissions_stay_under_target(self):
+        # Normal workload latency test: multiple submissions each complete well under 3 seconds
+        for i in range(5):
+            started = time.perf_counter()
+            response = self.alice.post("/complaints", {
+                "category": "Hostel",
+                "description": f"Repeated test submission {i + 1}: water pressure is low.",
+                "severity": "Medium",
+            })
+            elapsed = time.perf_counter() - started
+            self.assertEqual(response.status_code, 201)
+            self.assertLess(elapsed, 3.0, f"Submission {i + 1} took {elapsed:.3f}s (target < 3s)")
+
+    def test_browser_keyboard_and_form_attributes(self):
+        page = self.app.test_client().get("/")
+        self.assertEqual(page.status_code, 200)
+        content = page.data.decode("utf-8")
+
+        # Accessibility and keyboard navigation attributes
+        self.assertIn('autocomplete="username"', content)
+        self.assertIn('autocomplete="current-password"', content)
+        self.assertIn('id="toggle-pwd"', content)
+        self.assertIn('aria-label="Show password"', content)
+        self.assertIn('role="tablist"', content)
+        self.assertIn('role="tab"', content)
+        self.assertIn('role="status"', content)
+        self.assertIn('role="alert"', content)
 
 
 if __name__ == "__main__":

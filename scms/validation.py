@@ -5,6 +5,30 @@ from .errors import validation_error
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
+# Human-readable labels used in field-specific validation messages.
+FIELD_LABELS = {
+    "university_id": "University ID",
+    "name": "Full name",
+    "email": "Email address",
+    "password": "Password",
+    "category": "Complaint category",
+    "description": "Complaint description",
+    "severity": "Severity",
+    "remarks": "Resolution remarks",
+    "reason": "Rejection reason",
+    "expected_version": "Complaint version",
+    "justification": "Appeal justification",
+    "rating": "Feedback rating",
+    "comment": "Feedback comment",
+    "page": "Page number",
+    "page_size": "Page size",
+}
+
+
+def field_label(name):
+    """Return a readable label for a request field."""
+    return FIELD_LABELS.get(name, name.replace("_", " ").capitalize())
+
 
 def check_unknown(data, allowed, errors):
     for name in data:
@@ -17,18 +41,18 @@ def text(data, name, max_len, errors, required=True, strip=True):
     value = data.get(name)
     if value is None:
         if required:
-            errors[name] = f"{name.replace('_', ' ').capitalize()} is required."
+            errors[name] = f"{field_label(name)} is required."
         return None
     if not isinstance(value, str):
-        errors[name] = "Must be text."
+        errors[name] = f"{field_label(name)} must be text."
         return None
     if strip:
         value = value.strip()
     if required and not value:
-        errors[name] = f"{name.replace('_', ' ').capitalize()} is required."
+        errors[name] = f"{field_label(name)} is required."
         return None
     if len(value) > max_len:
-        errors[name] = f"Must be at most {max_len} characters."
+        errors[name] = f"{field_label(name)} must be at most {max_len} characters."
         return None
     return value
 
@@ -37,17 +61,17 @@ def integer(data, name, errors, minimum=None, maximum=None, required=True):
     value = data.get(name)
     if value is None:
         if required:
-            errors[name] = f"{name.replace('_', ' ').capitalize()} is required."
+            errors[name] = f"{field_label(name)} is required."
         return None
     # bool is a subclass of int; reject it explicitly.
     if isinstance(value, bool) or not isinstance(value, int):
-        errors[name] = "Must be an integer."
+        errors[name] = f"{field_label(name)} must be a whole number."
         return None
     if minimum is not None and value < minimum:
-        errors[name] = f"Must be at least {minimum}."
+        errors[name] = f"{field_label(name)} must be at least {minimum}."
         return None
     if maximum is not None and value > maximum:
-        errors[name] = f"Must be at most {maximum}."
+        errors[name] = f"{field_label(name)} must be at most {maximum}."
         return None
     return value
 
@@ -73,10 +97,10 @@ def _query_int(args, name, default, minimum, maximum, errors):
     try:
         value = int(raw)
     except (TypeError, ValueError):
-        errors[name] = "Must be an integer."
+        errors[name] = f"{field_label(name)} must be a whole number."
         return default
     if value < minimum or (maximum is not None and value > maximum):
         bound = f"between {minimum} and {maximum}" if maximum else f"at least {minimum}"
-        errors[name] = f"Must be {bound}."
+        errors[name] = f"{field_label(name)} must be {bound}."
         return default
     return value
