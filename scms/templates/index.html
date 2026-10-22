@@ -1,0 +1,1265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Smart Complaint Management System</title>
+<style>
+:root {
+  --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-text: #172033;
+  --color-muted: #536174;
+  --color-bg: #f4f6fa;
+  --color-card: #ffffff;
+  --color-border: #d2d9e4;
+  --color-border-focus: #2563eb;
+  --color-primary: #17643a;
+  --color-primary-hover: #124e2d;
+  --color-secondary-bg: #e8edf4;
+  --color-secondary-text: #172033;
+  --color-error: #b91c1c;
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fca5a5;
+  --color-success-bg: #e0f7e9;
+  --color-success-border: #78c997;
+  --color-success-text: #0f5132;
+  --radius: 8px;
+  --radius-sm: 6px;
+  --shadow: 0 2px 8px rgba(23, 32, 51, 0.08);
+  --shadow-lg: 0 4px 16px rgba(23, 32, 51, 0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 1.5rem 1rem;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 10px;
+  background: var(--color-border-focus);
+  color: white;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  z-index: 1000;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 10px; outline: 3px solid #172033; }
+
+.shell {
+  max-width: 820px;
+  margin: 0 auto;
+}
+
+/* Header & Navigation */
+.app-header {
+  margin-bottom: 1.25rem;
+}
+.brand-title {
+  font-size: 1.65rem;
+  font-weight: 750;
+  margin: 0 0 0.35rem 0;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+.brand-subtitle {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.nav-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--color-card);
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  margin-top: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+  font-weight: 550;
+}
+.badge-role {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #dbeafe;
+  color: #1e40af;
+  border-radius: 9999px;
+}
+.tabs-group {
+  display: flex;
+  gap: 0.35rem;
+}
+.tab-btn {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 40px;
+}
+.tab-btn:hover {
+  background: var(--color-secondary-bg);
+  color: var(--color-text);
+}
+.tab-btn.active {
+  background: var(--color-secondary-bg);
+  color: var(--color-primary);
+  border-color: var(--color-border);
+  font-weight: 700;
+}
+.count-badge {
+  display: inline-block;
+  background: var(--color-primary);
+  color: white;
+  border-radius: 9999px;
+  padding: 0.05rem 0.45rem;
+  font-size: 0.75rem;
+  margin-left: 0.25rem;
+}
+
+/* Cards */
+.card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 1.25rem 0;
+  box-shadow: var(--shadow);
+}
+.card h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 0.4rem 0;
+  color: #0f172a;
+}
+.muted {
+  color: var(--color-muted);
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  font-size: 0.93rem;
+}
+
+/* Fields & Form Controls */
+.field {
+  margin: 1.15rem 0;
+}
+label {
+  display: block;
+  font-weight: 650;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+  color: #1e293b;
+}
+.required {
+  color: var(--color-error);
+  font-weight: 700;
+  margin-left: 0.2rem;
+}
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+input, select, textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.98rem;
+  border: 1.5px solid #8995a7;
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  background: #ffffff;
+  color: #0f172a;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  min-height: 44px;
+}
+input::placeholder, textarea::placeholder {
+  color: #8b96a5;
+  font-size: 0.92rem;
+}
+textarea {
+  min-height: 125px;
+  resize: vertical;
+  line-height: 1.5;
+}
+input:hover, select:hover, textarea:hover {
+  border-color: #556274;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.18);
+}
+input.has-error, select.has-error, textarea.has-error {
+  border-color: var(--color-error);
+  background-color: var(--color-error-bg);
+}
+input.has-error:focus, select.has-error:focus, textarea.has-error:focus {
+  box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.18);
+}
+
+.hint {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  margin: 0.35rem 0 0 0;
+  line-height: 1.4;
+}
+.desc-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.35rem;
+}
+.char-count {
+  font-size: 0.83rem;
+  font-weight: 550;
+  color: var(--color-muted);
+  margin-left: auto;
+}
+.char-count.warning { color: #d97706; }
+.char-count.danger { color: var(--color-error); font-weight: 700; }
+
+.error {
+  color: var(--color-error);
+  margin: 0.35rem 0 0 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.error:empty { display: none; }
+
+.toggle-pwd-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--color-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 32px;
+}
+.toggle-pwd-btn:hover {
+  background: #f1f5f9;
+  color: var(--color-text);
+}
+
+/* Buttons */
+.form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: white;
+  font-family: inherit;
+  font-size: 0.96rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 44px;
+}
+button:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+button.secondary {
+  background: var(--color-secondary-bg);
+  color: var(--color-secondary-text);
+  border-color: var(--color-border);
+}
+button.secondary:hover:not(:disabled) {
+  background: #d9e2ed;
+}
+button.outline-danger {
+  background: transparent;
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+button.outline-danger:hover:not(:disabled) {
+  background: var(--color-error-bg);
+}
+button.btn-sm {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.85rem;
+  min-height: 34px;
+}
+
+/* Banners & Messages */
+.banner {
+  padding: 0.95rem 1.15rem;
+  border-radius: var(--radius);
+  margin: 1rem 0;
+  font-size: 0.94rem;
+  line-height: 1.45;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.banner:empty { display: none; }
+.banner.success {
+  background: var(--color-success-bg);
+  border: 1.5px solid var(--color-success-border);
+  color: var(--color-success-text);
+}
+.banner.failure {
+  background: var(--color-error-bg);
+  border: 1.5px solid var(--color-error-border);
+  color: var(--color-error);
+}
+.banner.info {
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  color: #1e40af;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  border-radius: 9999px;
+  line-height: 1.2;
+}
+.badge-status-Submitted { background: #dbeafe; color: #1e40af; }
+.badge-status-Escalated { background: #ffedd5; color: #9a3412; }
+.badge-status-UnderAppealReview { background: #f3e8ff; color: #6b21a8; }
+.badge-status-Resolved { background: #dcfce7; color: #166534; }
+.badge-status-Rejected { background: #fee2e2; color: #991b1b; }
+
+.badge-sev-Low { background: #f1f5f9; color: #334155; }
+.badge-sev-Medium { background: #fef3c7; color: #92400e; }
+.badge-sev-High { background: #fee2e2; color: #b91c1c; font-weight: 700; }
+
+/* Tracking List */
+.list-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+.filter-group select {
+  min-height: 38px;
+  padding: 0.4rem 0.7rem;
+  width: auto;
+}
+
+.complaints-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.complaint-item {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background: #ffffff;
+  padding: 1rem 1.15rem;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.complaint-item:hover {
+  border-color: #94a3b8;
+  box-shadow: var(--shadow);
+}
+.complaint-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+.complaint-ref {
+  font-weight: 750;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
+.complaint-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+.complaint-assigned {
+  font-size: 0.86rem;
+  color: var(--color-muted);
+  margin-top: 0.4rem;
+}
+.complaint-desc {
+  font-size: 0.93rem;
+  color: #334155;
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.complaint-details-box {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  background: #f8fafc;
+  border-left: 3px solid #64748b;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.88rem;
+}
+.complaint-details-box.resolved {
+  border-left-color: #16a34a;
+  background: #f0fdf4;
+}
+.complaint-details-box.rejected {
+  border-left-color: #dc2626;
+  background: #fef2f2;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 1rem;
+  color: var(--color-muted);
+}
+.empty-state p { margin: 0.5rem 0; font-size: 0.95rem; }
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+}
+
+/* Accessibility focus */
+[hidden] { display: none !important; }
+:focus-visible {
+  outline: 3px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  body { padding: 1rem 0.65rem; }
+  .card { padding: 1.15rem 0.9rem; }
+  .nav-bar { flex-direction: column; align-items: stretch; }
+  .tabs-group { width: 100%; }
+  .tab-btn { flex: 1; text-align: center; }
+  .form-actions button { width: 100%; }
+  .list-toolbar { flex-direction: column; align-items: stretch; }
+  .filter-group { justify-content: space-between; }
+  .filter-group select { flex: 1; }
+}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<main class="shell" id="main-content">
+  <header class="app-header">
+    <h1 class="brand-title">Smart Complaint Management System</h1>
+    <p class="brand-subtitle">Sign in or create a student account to submit and track complaints.</p>
+    
+    <nav class="nav-bar" id="app-nav" hidden aria-label="Main Navigation">
+      <div class="user-info">
+        <span class="user-badge" id="user-display">Student</span>
+        <span class="badge-role" id="role-display">Student</span>
+      </div>
+      <div class="tabs-group" role="tablist" id="nav-tabs">
+        <button type="button" class="tab-btn active" id="tab-submit" role="tab" aria-selected="true" aria-controls="complaint-card">Submit Complaint</button>
+        <button type="button" class="tab-btn" id="tab-track" role="tab" aria-selected="false" aria-controls="tracking-card">Track My Complaints <span class="count-badge" id="complaints-count" hidden>0</span></button>
+      </div>
+      <button type="button" class="secondary btn-sm" id="logout">Sign out</button>
+    </nav>
+  </header>
+
+  <div id="global-message" role="status" aria-live="polite"></div>
+
+  <!-- Authentication Section -->
+  <section class="card" id="auth-card" aria-labelledby="auth-title">
+    <h2 id="auth-title">Sign in</h2>
+    <p class="muted" id="auth-help">Use your University ID and password.</p>
+    <form id="auth-form" novalidate>
+      <div class="field" id="name-wrap" hidden>
+        <label for="name">Full name <span class="required" aria-hidden="true">*</span></label>
+        <div class="input-wrap">
+          <input id="name" name="name" autocomplete="name" maxlength="100" placeholder="e.g. Jane Doe" aria-describedby="error-name">
+        </div>
+        <p class="error" id="error-name" role="alert"></p>
+      </div>
+
+      <div class="field">
+        <label for="university_id">University ID <span class="required" aria-hidden="true">*</span></label>
+        <div class="input-wrap">
+          <input id="university_id" name="university_id" autocomplete="username" maxlength="20" required placeholder="e.g. STU1001" aria-required="true" aria-describedby="error-university_id hint-uid">
+        </div>
+        <p class="hint" id="hint-uid">Your assigned University ID number.</p>
+        <p class="error" id="error-university_id" role="alert"></p>
+      </div>
+
+      <div class="field" id="email-wrap" hidden>
+        <label for="email">University email address <span class="required" aria-hidden="true">*</span></label>
+        <div class="input-wrap">
+          <input id="email" name="email" type="email" autocomplete="email" maxlength="100" placeholder="e.g. student@univ.edu" aria-describedby="error-email hint-email">
+        </div>
+        <p class="hint" id="hint-email">We'll use this address for official complaint updates.</p>
+        <p class="error" id="error-email" role="alert"></p>
+      </div>
+
+      <div class="field">
+        <label for="password">Password <span class="required" aria-hidden="true">*</span></label>
+        <div class="input-wrap">
+          <input id="password" name="password" type="password" autocomplete="current-password" required placeholder="Enter your password" aria-required="true" aria-describedby="error-password">
+          <button type="button" class="toggle-pwd-btn" id="toggle-pwd" aria-label="Show password" title="Toggle password visibility">Show</button>
+        </div>
+        <p class="error" id="error-password" role="alert"></p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" id="auth-submit">Sign in</button>
+        <button type="button" class="secondary" id="toggle-auth">Create student account</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Student Complaint Submission Section -->
+  <section class="card" id="complaint-card" hidden aria-labelledby="complaint-title">
+    <h2 id="complaint-title">Submit a complaint</h2>
+    <p class="muted">Fields marked with <span class="required" aria-hidden="true">*</span> are required. A confirmation and reference number appear after the complaint is saved.</p>
+    <form id="complaint-form" novalidate>
+      <div class="field">
+        <label for="category">Complaint category <span class="required" aria-hidden="true">*</span></label>
+        <select id="category" name="category" required aria-required="true" aria-describedby="hint-category error-category">
+          <option value="">Choose a category</option>
+          <option value="Facilities">Facilities</option>
+          <option value="Hostel">Hostel</option>
+          <option value="Library">Library</option>
+          <option value="Wi-Fi">Wi-Fi</option>
+          <option value="Examination">Examination</option>
+          <option value="Other">Other</option>
+        </select>
+        <p class="hint" id="hint-category">Choose the area that best matches the problem.</p>
+        <p class="error" id="error-category" role="alert"></p>
+      </div>
+
+      <div class="field">
+        <label for="description">Describe the complaint <span class="required" aria-hidden="true">*</span></label>
+        <textarea id="description" name="description" maxlength="1000" required placeholder="Explain what happened and where. Mention room numbers, devices, or dates if applicable..." aria-required="true" aria-describedby="hint-description char-count error-description"></textarea>
+        <div class="desc-footer">
+          <p class="hint" id="hint-description">Explain what happened and where. Maximum 1,000 characters.</p>
+          <span class="char-count" id="char-count" aria-live="polite">1,000 characters remaining</span>
+        </div>
+        <p class="error" id="error-description" role="alert"></p>
+      </div>
+
+      <div class="field">
+        <label for="severity">Severity <span class="required" aria-hidden="true">*</span></label>
+        <select id="severity" name="severity" required aria-required="true" aria-describedby="hint-severity error-severity">
+          <option value="">Choose severity</option>
+          <option value="Low">Low — normal issue</option>
+          <option value="Medium">Medium — needs attention</option>
+          <option value="High">High — urgent issue</option>
+        </select>
+        <p class="hint" id="hint-severity">Low and Medium route initially to Faculty; High routes directly to the Grievance Committee.</p>
+        <p class="error" id="error-severity" role="alert"></p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" id="complaint-submit">Submit complaint</button>
+        <button type="button" class="secondary" id="clear-complaint">Clear form</button>
+      </div>
+    </form>
+    <div id="submit-message" role="status" aria-live="polite"></div>
+  </section>
+
+  <!-- Student Complaint Tracking Section -->
+  <section class="card" id="tracking-card" hidden aria-labelledby="tracking-title">
+    <div class="list-toolbar">
+      <div>
+        <h2 id="tracking-title" style="margin:0;">Track My Complaints</h2>
+        <p class="hint" style="margin:0.25rem 0 0 0;">View real-time progress, assigned handlers, and resolution details.</p>
+      </div>
+      <div style="display:flex; gap:0.5rem; align-items:center;">
+        <div class="filter-group">
+          <label for="status-filter">Status:</label>
+          <select id="status-filter" aria-label="Filter complaints by status">
+            <option value="">All statuses</option>
+            <option value="Submitted">Submitted</option>
+            <option value="Escalated">Escalated</option>
+            <option value="Under Appeal Review">Under Appeal Review</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+        </div>
+        <button type="button" class="secondary btn-sm" id="refresh-complaints">Refresh</button>
+      </div>
+    </div>
+
+    <div id="tracking-loading" class="hint" hidden style="margin:1rem 0;">Loading complaints...</div>
+    <div id="complaints-list" class="complaints-grid" role="region" aria-label="Complaints List"></div>
+
+    <div class="pagination" id="tracking-pagination" hidden>
+      <button type="button" class="secondary btn-sm" id="prev-page" disabled>Previous</button>
+      <span id="page-indicator">Page 1</span>
+      <button type="button" class="secondary btn-sm" id="next-page" disabled>Next</button>
+    </div>
+  </section>
+
+  <!-- Staff Dashboard Notice Section -->
+  <section class="card" id="staff-card" hidden aria-labelledby="staff-title">
+    <h2 id="staff-title">Staff Portal</h2>
+    <p class="muted">You are signed in with a staff account (<span id="staff-role-label"></span>).</p>
+    <div class="banner info">
+      <div>
+        <strong>Staff Queue:</strong> You can view and process complaints assigned to your department through the API and dashboard endpoints.
+      </div>
+    </div>
+    <div id="staff-queue-container">
+      <div class="list-toolbar">
+        <h3 style="margin:0; font-size:1.1rem;">Assigned Complaints Queue</h3>
+        <button type="button" class="secondary btn-sm" id="refresh-staff-queue">Refresh Queue</button>
+      </div>
+      <div id="staff-queue-list" class="complaints-grid"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+let csrfToken = null;
+let currentUser = null;
+let registering = false;
+let currentTrackingPage = 1;
+const PAGE_SIZE = 10;
+
+const $ = id => document.getElementById(id);
+
+function showMessage(target, message, kind) {
+  const el = $(target);
+  if (!el) return;
+  el.className = message ? `banner ${kind || ''}` : '';
+  el.textContent = message || '';
+}
+
+function clearErrors(prefix='error-') {
+  document.querySelectorAll(`[id^="${prefix}"]`).forEach(node => {
+    node.textContent = '';
+  });
+  document.querySelectorAll('.has-error').forEach(input => {
+    input.classList.remove('has-error');
+    input.removeAttribute('aria-invalid');
+  });
+}
+
+function displayFieldErrors(fields, prefix='error-') {
+  if (!fields) return;
+  let firstFailedInput = null;
+  Object.entries(fields).forEach(([field, message]) => {
+    const errorNode = $(`${prefix}${field}`);
+    if (errorNode) errorNode.textContent = message;
+    const inputNode = $(field);
+    if (inputNode) {
+      inputNode.classList.add('has-error');
+      inputNode.setAttribute('aria-invalid', 'true');
+      if (!firstFailedInput) firstFailedInput = inputNode;
+    }
+  });
+  if (firstFailedInput) {
+    firstFailedInput.focus();
+  }
+}
+
+// Clear individual error as user interacts with an input
+['university_id', 'password', 'name', 'email', 'category', 'description', 'severity'].forEach(id => {
+  const el = $(id);
+  if (!el) return;
+  const clearCurrent = () => {
+    if (el.classList.contains('has-error')) {
+      el.classList.remove('has-error');
+      el.removeAttribute('aria-invalid');
+      const err = $(`error-${id}`);
+      if (err) err.textContent = '';
+    }
+  };
+  el.addEventListener('input', clearCurrent);
+  el.addEventListener('change', clearCurrent);
+});
+
+// Character counter for description
+const descInput = $('description');
+const charCount = $('char-count');
+function updateCharCounter() {
+  if (!descInput || !charCount) return;
+  const remaining = 1000 - descInput.value.length;
+  charCount.textContent = `${remaining.toLocaleString()} characters remaining`;
+  charCount.classList.remove('warning', 'danger');
+  if (remaining < 50) {
+    charCount.classList.add('danger');
+  } else if (remaining < 200) {
+    charCount.classList.add('warning');
+  }
+}
+if (descInput) {
+  descInput.addEventListener('input', updateCharCounter);
+}
+
+// Preserve complaint form in sessionStorage so refresh doesn't lose data
+function saveComplaintDraft() {
+  try {
+    const draft = {
+      category: $('category').value,
+      description: $('description').value,
+      severity: $('severity').value
+    };
+    sessionStorage.setItem('scms_complaint_draft', JSON.stringify(draft));
+  } catch (_) {}
+}
+function loadComplaintDraft() {
+  try {
+    const raw = sessionStorage.getItem('scms_complaint_draft');
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    if (draft.category && !$('category').value) $('category').value = draft.category;
+    if (draft.description && !$('description').value) {
+      $('description').value = draft.description;
+      updateCharCounter();
+    }
+    if (draft.severity && !$('severity').value) $('severity').value = draft.severity;
+  } catch (_) {}
+}
+function clearComplaintDraft() {
+  try { sessionStorage.removeItem('scms_complaint_draft'); } catch (_) {}
+}
+['category', 'description', 'severity'].forEach(id => {
+  const el = $(id);
+  if (el) el.addEventListener('input', saveComplaintDraft);
+});
+
+// Password visibility toggle
+const togglePwdBtn = $('toggle-pwd');
+if (togglePwdBtn) {
+  togglePwdBtn.addEventListener('click', () => {
+    const pwd = $('password');
+    if (pwd.type === 'password') {
+      pwd.type = 'text';
+      togglePwdBtn.textContent = 'Hide';
+      togglePwdBtn.setAttribute('aria-label', 'Hide password');
+    } else {
+      pwd.type = 'password';
+      togglePwdBtn.textContent = 'Show';
+      togglePwdBtn.setAttribute('aria-label', 'Show password');
+    }
+  });
+}
+
+async function api(path, method='GET', data=undefined) {
+  const headers = {};
+  if (data !== undefined) headers['Content-Type'] = 'application/json';
+  if (csrfToken && !['GET','HEAD'].includes(method)) headers['X-CSRF-Token'] = csrfToken;
+  const response = await fetch(`/api/v1${path}`, {
+    method,
+    headers,
+    body: data === undefined ? undefined : JSON.stringify(data),
+    credentials: 'same-origin'
+  });
+  const payload = response.status === 204 ? {} : await response.json();
+  if (!response.ok) {
+    const error = payload.error || {};
+    const e = new Error(error.message || 'The request could not be completed.');
+    e.fields = error.fields || {};
+    e.code = error.code || 'UNKNOWN_ERROR';
+    e.status = response.status;
+    throw e;
+  }
+  return payload.data;
+}
+
+function setAuthenticated(authenticated, role='Student', universityId='') {
+  $('auth-card').hidden = authenticated;
+  $('app-nav').hidden = !authenticated;
+
+  if (authenticated) {
+    $('user-display').textContent = universityId || 'User';
+    $('role-display').textContent = role;
+
+    if (role === 'Student') {
+      $('staff-card').hidden = true;
+      $('nav-tabs').hidden = false;
+      showTab('submit');
+      loadComplaintDraft();
+      loadStudentComplaints(1);
+    } else {
+      $('complaint-card').hidden = true;
+      $('tracking-card').hidden = true;
+      $('nav-tabs').hidden = true;
+      $('staff-card').hidden = false;
+      $('staff-role-label').textContent = role;
+      loadStaffQueue();
+    }
+  } else {
+    $('complaint-card').hidden = true;
+    $('tracking-card').hidden = true;
+    $('staff-card').hidden = true;
+  }
+}
+
+function showTab(tab) {
+  const isSubmit = tab === 'submit';
+  $('tab-submit').classList.toggle('active', isSubmit);
+  $('tab-submit').setAttribute('aria-selected', isSubmit);
+  $('tab-track').classList.toggle('active', !isSubmit);
+  $('tab-track').setAttribute('aria-selected', !isSubmit);
+
+  $('complaint-card').hidden = !isSubmit;
+  $('tracking-card').hidden = isSubmit;
+
+  if (!isSubmit) {
+    loadStudentComplaints(currentTrackingPage);
+  }
+}
+
+$('tab-submit').addEventListener('click', () => showTab('submit'));
+$('tab-track').addEventListener('click', () => showTab('track'));
+
+function setAuthMode() {
+  $('auth-title').textContent = registering ? 'Create student account' : 'Sign in';
+  $('auth-help').textContent = registering
+    ? 'Register with your University ID, name, email, and password.'
+    : 'Use your University ID and password.';
+  $('name-wrap').hidden = !registering;
+  $('email-wrap').hidden = !registering;
+  $('auth-submit').textContent = registering ? 'Register and sign in' : 'Sign in';
+  $('toggle-auth').textContent = registering ? 'Back to sign in' : 'Create student account';
+  $('password').autocomplete = registering ? 'new-password' : 'current-password';
+  clearErrors();
+}
+
+async function refreshSession() {
+  try {
+    const session = await api('/session');
+    csrfToken = session.csrf_token;
+    if (session.authenticated) {
+      currentUser = session;
+      setAuthenticated(true, session.role, session.university_id || `User #${session.user_id}`);
+    } else {
+      currentUser = null;
+      setAuthenticated(false);
+    }
+  } catch (_) {
+    showMessage('global-message', 'Unable to connect to the service. Please refresh the page.', 'failure');
+  }
+}
+
+$('toggle-auth').addEventListener('click', () => {
+  registering = !registering;
+  setAuthMode();
+});
+
+$('auth-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  clearErrors();
+  showMessage('global-message', '');
+
+  const data = {
+    university_id: $('university_id').value.trim(),
+    password: $('password').value
+  };
+
+  const submitBtn = $('auth-submit');
+  const originalText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = registering ? 'Creating account...' : 'Signing in...';
+
+  try {
+    if (registering) {
+      data.name = $('name').value.trim();
+      data.email = $('email').value.trim();
+      await api('/users', 'POST', data);
+    }
+    const session = await api('/session', 'POST', {
+      university_id: data.university_id,
+      password: data.password
+    });
+    csrfToken = session.csrf_token;
+    currentUser = session;
+
+    if (session.role !== 'Student') {
+      showMessage('global-message', `Signed in as ${session.role}. Staff interface activated.`, 'info');
+      setAuthenticated(true, session.role, data.university_id);
+      return;
+    }
+
+    $('auth-form').reset();
+    setAuthenticated(true, 'Student', data.university_id);
+    showMessage('global-message', 'Signed in successfully. Welcome to SCMS!', 'success');
+  } catch (error) {
+    displayFieldErrors(error.fields);
+    showMessage('global-message', error.message, 'failure');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
+});
+
+$('complaint-form').addEventListener('submit', async event => {
+  event.preventDefault();
+  clearErrors();
+  showMessage('submit-message', '');
+
+  const data = {
+    category: $('category').value,
+    description: $('description').value.trim(),
+    severity: $('severity').value
+  };
+
+  const button = $('complaint-submit');
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = 'Submitting complaint...';
+  const started = performance.now();
+
+  try {
+    const result = await api('/complaints', 'POST', data);
+    const elapsed = (performance.now() - started) / 1000;
+    showMessage(
+      'submit-message',
+      `Complaint submitted successfully! Reference ID: #${result.complaint_id}. Confirmation received in ${elapsed.toFixed(3)} seconds.`,
+      'success'
+    );
+    $('complaint-form').reset();
+    updateCharCounter();
+    clearComplaintDraft();
+    loadStudentComplaints(1);
+  } catch (error) {
+    displayFieldErrors(error.fields);
+    showMessage('submit-message', error.message || 'Please correct the highlighted fields.', 'failure');
+  } finally {
+    button.disabled = false;
+    button.textContent = originalText;
+  }
+});
+
+$('clear-complaint').addEventListener('click', () => {
+  $('complaint-form').reset();
+  clearErrors();
+  clearComplaintDraft();
+  updateCharCounter();
+  showMessage('submit-message', '');
+});
+
+$('logout').addEventListener('click', async () => {
+  try {
+    await api('/session', 'DELETE');
+  } catch (_) {}
+  csrfToken = null;
+  currentUser = null;
+  setAuthenticated(false);
+  showMessage('global-message', 'You have been signed out safely.', 'success');
+});
+
+// Student complaints tracking
+async function loadStudentComplaints(page = 1) {
+  const container = $('complaints-list');
+  const statusFilter = $('status-filter').value;
+  $('tracking-loading').hidden = false;
+
+  let query = `?page=${page}&page_size=${PAGE_SIZE}`;
+  if (statusFilter) query += `&status=${encodeURIComponent(statusFilter)}`;
+
+  try {
+    const response = await fetch(`/api/v1/complaints${query}`, {
+      headers: csrfToken ? { 'X-CSRF-Token': csrfToken } : {},
+      credentials: 'same-origin'
+    });
+    if (!response.ok) throw new Error('Could not load complaints.');
+    const result = await response.json();
+    const items = result.data || [];
+    const total = result.total || 0;
+    currentTrackingPage = page;
+
+    const countBadge = $('complaints-count');
+    countBadge.textContent = total;
+    countBadge.hidden = total === 0;
+
+    renderComplaintsList(container, items, total, page);
+  } catch (err) {
+    container.innerHTML = `<div class="banner failure">Error loading complaints: ${err.message}</div>`;
+  } finally {
+    $('tracking-loading').hidden = true;
+  }
+}
+
+function renderComplaintsList(container, items, total, page) {
+  if (items.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <p><strong>No complaints found.</strong></p>
+        <p class="hint">You have not submitted any complaints matching this filter. Use the "Submit Complaint" tab to create one.</p>
+      </div>`;
+    $('tracking-pagination').hidden = true;
+    return;
+  }
+
+  container.innerHTML = items.map(c => {
+    const dateFormatted = c.submitted_at ? new Date(c.submitted_at).toLocaleString() : 'N/A';
+    const statusClass = `badge-status-${(c.status || '').replace(/\s+/g, '')}`;
+    const sevClass = `badge-sev-${c.severity || 'Low'}`;
+    return `
+      <article class="complaint-item" id="item-${c.complaint_id}">
+        <div class="complaint-item-header">
+          <span class="complaint-ref">#${c.complaint_id} — ${escapeHtml(c.category)}</span>
+          <div class="complaint-meta">
+            <span class="badge ${sevClass}">Severity: ${escapeHtml(c.severity)}</span>
+            <span class="badge ${statusClass}">${escapeHtml(c.status)}</span>
+          </div>
+        </div>
+        <div class="complaint-assigned">
+          <strong>Assigned Handler:</strong> ${escapeHtml(c.assigned_role || 'Level ' + c.current_level)}
+          &bull; <strong>Submitted:</strong> ${dateFormatted}
+        </div>
+        <div style="margin-top:0.6rem;">
+          <button type="button" class="secondary btn-sm" onclick="toggleDetails(${c.complaint_id})">
+            View Details & Actions
+          </button>
+        </div>
+        <div id="details-${c.complaint_id}" hidden style="margin-top:0.65rem;"></div>
+      </article>`;
+  }).join('');
+
+  // Pagination
+  const totalPages = Math.ceil(total / PAGE_SIZE) || 1;
+  const pagination = $('tracking-pagination');
+  pagination.hidden = totalPages <= 1;
+  $('prev-page').disabled = page <= 1;
+  $('next-page').disabled = page >= totalPages;
+  $('page-indicator').textContent = `Page ${page} of ${totalPages} (${total} total)`;
+}
+
+$('prev-page').addEventListener('click', () => {
+  if (currentTrackingPage > 1) loadStudentComplaints(currentTrackingPage - 1);
+});
+$('next-page').addEventListener('click', () => {
+  loadStudentComplaints(currentTrackingPage + 1);
+});
+$('status-filter').addEventListener('change', () => loadStudentComplaints(1));
+$('refresh-complaints').addEventListener('click', () => loadStudentComplaints(currentTrackingPage));
+
+async function toggleDetails(complaintId) {
+  const box = $(`details-${complaintId}`);
+  if (!box.hidden) {
+    box.hidden = true;
+    return;
+  }
+  box.hidden = false;
+  box.innerHTML = '<span class="hint">Loading details...</span>';
+
+  try {
+    const c = await api(`/complaints/${complaintId}`);
+    let content = `
+      <div class="complaint-details-box">
+        <strong>Description:</strong>
+        <p class="complaint-desc">${escapeHtml(c.description)}</p>
+      </div>`;
+
+    if (c.resolution_remarks) {
+      content += `
+        <div class="complaint-details-box resolved" style="margin-top:0.5rem;">
+          <strong>Resolution Remarks:</strong>
+          <p style="margin:0.25rem 0 0 0;">${escapeHtml(c.resolution_remarks)}</p>
+        </div>`;
+    }
+
+    if (c.rejection_reason) {
+      content += `
+        <div class="complaint-details-box rejected" style="margin-top:0.5rem;">
+          <strong>Rejection Reason:</strong>
+          <p style="margin:0.25rem 0 0 0;">${escapeHtml(c.rejection_reason)}</p>
+        </div>`;
+    }
+
+    // Appeal button if rejected and not yet appealed
+    if (c.status === 'Rejected' && !c.appealed) {
+      content += `
+        <div style="margin-top:0.75rem; padding:0.75rem; background:#fff7ed; border:1px solid #fdba74; border-radius:6px;">
+          <strong>Submit an Appeal:</strong>
+          <p class="hint" style="margin:0.25rem 0 0.5rem 0;">You may appeal this rejection once to escalate it to the next authority.</p>
+          <div class="field" style="margin:0.5rem 0;">
+            <label for="appeal-just-${c.complaint_id}" style="font-size:0.88rem;">Appeal Justification <span class="required">*</span></label>
+            <textarea id="appeal-just-${c.complaint_id}" placeholder="Explain why this decision should be reconsidered..." maxlength="1000" style="min-height:80px;"></textarea>
+          </div>
+          <button type="button" class="btn-sm" onclick="submitAppeal(${c.complaint_id}, ${c.version})">Submit Appeal</button>
+          <div id="appeal-msg-${c.complaint_id}" role="status" aria-live="polite"></div>
+        </div>`;
+    }
+
+    // Feedback if resolved
+    if (c.status === 'Resolved') {
+      try {
+        const fb = await api(`/complaints/${complaintId}/feedback`);
+        content += `
+          <div class="complaint-details-box resolved" style="margin-top:0.5rem;">
+            <strong>Your Feedback:</strong> Rating: ${'★'.repeat(fb.rating)}${'☆'.repeat(5 - fb.rating)} (${fb.rating}/5)
+            ${fb.comment ? `<p style="margin:0.25rem 0 0 0;">${escapeHtml(fb.comment)}</p>` : ''}
+          </div>`;
+      } catch (_) {
+        content += `
+          <div style="margin-top:0.75rem; padding:0.75rem; background:#f0fdf4; border:1px solid #86efac; border-radius:6px;">
+            <strong>Submit Resolution Feedback:</strong>
+            <div class="field" style="margin:0.5rem 0;">
+              <label for="fb-rating-${c.complaint_id}" style="font-size:0.88rem;">Rating (1 to 5) <span class="required">*</span></label>
+              <select id="fb-rating-${c.complaint_id}" style="width:auto; min-height:36px; padding:0.3rem 0.6rem;">
+                <option value="5">5 — Excellent</option>
+                <option value="4">4 — Good</option>
+                <option value="3">3 — Satisfactory</option>
+                <option value="2">2 — Poor</option>
+                <option value="1">1 — Very Poor</option>
+              </select>
+            </div>
+            <div class="field" style="margin:0.5rem 0;">
+              <label for="fb-comment-${c.complaint_id}" style="font-size:0.88rem;">Comments (optional)</label>
+              <input id="fb-comment-${c.complaint_id}" placeholder="Additional feedback about the resolution..." maxlength="500">
+            </div>
+            <button type="button" class="btn-sm" onclick="submitFeedback(${c.complaint_id})">Submit Feedback</button>
+            <div id="fb-msg-${c.complaint_id}" role="status" aria-live="polite"></div>
+          </div>`;
+      }
+    }
+
+    box.innerHTML = content;
+  } catch (err) {
+    box.innerHTML = `<span class="error">${err.message}</span>`;
+  }
+}
+
+async function submitAppeal(complaintId, expectedVersion) {
+  const justInput = $(`appeal-just-${complaintId}`);
+  const msg = $(`appeal-msg-${complaintId}`);
+  const justification = justInput ? justInput.value.trim() : '';
+  if (!justification) {
+    showMessage(`appeal-msg-${complaintId}`, 'Please provide an appeal justification.', 'failure');
+    return;
+  }
+  try {
+    await api(`/complaints/${complaintId}/appeals`, 'POST', {
+      justification,
+      expected_version: expectedVersion
+    });
+    showMessage(`appeal-msg-${complaintId}`, 'Appeal submitted successfully. The complaint is now Under Appeal Review.', 'success');
+    setTimeout(() => loadStudentComplaints(currentTrackingPage), 1000);
+  } catch (err) {
+    showMessage(`appeal-msg-${complaintId}`, err.message, 'failure');
+  }
+}
+
+async function submitFeedback(complaintId) {
+  const rating = parseInt($(`fb-rating-${complaintId}`).value, 10);
+  const comment = $(`fb-comment-${complaintId}`).value.trim();
+  try {
+    await api(`/complaints/${complaintId}/feedback`, 'POST', {
+      rating,
+      comment: comment || null
+    });
+    showMessage(`fb-msg-${complaintId}`, 'Thank you! Feedback recorded.', 'success');
+    setTimeout(() => toggleDetails(complaintId), 800);
+  } catch (err) {
+    showMessage(`fb-msg-${complaintId}`, err.message, 'failure');
+  }
+}
+
+// Staff queue
+async function loadStaffQueue() {
+  const container = $('staff-queue-list');
+  if (!container) return;
+  container.innerHTML = '<span class="hint">Loading assigned queue...</span>';
+  try {
+    const result = await api('/complaints?page=1&page_size=20');
+    const items = result || [];
+    if (items.length === 0) {
+      container.innerHTML = '<div class="empty-state"><p>No complaints currently assigned to your queue.</p></div>';
+      return;
+    }
+    container.innerHTML = items.map(c => `
+      <article class="complaint-item">
+        <div class="complaint-item-header">
+          <span class="complaint-ref">#${c.complaint_id} — ${escapeHtml(c.category)}</span>
+          <div class="complaint-meta">
+            <span class="badge badge-sev-${c.severity}">Severity: ${escapeHtml(c.severity)}</span>
+            <span class="badge badge-status-${(c.status || '').replace(/\s+/g, '')}">${escapeHtml(c.status)}</span>
+          </div>
+        </div>
+        <div class="complaint-assigned">
+          <strong>Submitted:</strong> ${new Date(c.submitted_at).toLocaleString()}
+        </div>
+      </article>
+    `).join('');
+  } catch (err) {
+    container.innerHTML = `<div class="banner failure">Error loading queue: ${err.message}</div>`;
+  }
+}
+const refreshStaffBtn = $('refresh-staff-queue');
+if (refreshStaffBtn) refreshStaffBtn.addEventListener('click', loadStaffQueue);
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+refreshSession();
+</script>
+</body>
+</html>

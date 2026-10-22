@@ -13,6 +13,8 @@ Modules (Section 3 component ids):
 import os
 from pathlib import Path
 
+from flask import render_template
+
 from . import db
 from .api import bp as api_blueprint
 from .api import register_error_handlers, register_request_hooks
@@ -41,6 +43,11 @@ def create_app(test_config=None):
     db.init_db(app.config["DATABASE"])
 
     app.register_blueprint(api_blueprint, url_prefix="/api/v1")
+
+    @app.get("/")
+    def complaint_home():
+        """Accessible browser form for students and staff using the JSON API."""
+        return render_template("index.html")
     register_request_hooks(app)
     register_error_handlers(app)
     register_cli(app)
