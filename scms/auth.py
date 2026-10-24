@@ -182,6 +182,10 @@ def require_student(actor):
         raise forbidden()
 
 
+def can_review_sla(actor):
+    return actor.role == "Dean" and actor.sla_review
+
+
 def require_sla_review(actor):
-    if actor.level is None or not actor.sla_review:
+    if not can_review_sla(actor):
         raise forbidden("SLA review permission is required.")

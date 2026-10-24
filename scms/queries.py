@@ -69,6 +69,7 @@ def sla_check(conn, actor, now=None):
         if elapsed > threshold:
             items.append({
                 "complaint_id": c["complaint_id"],
+                "version": c["version"],
                 "status": c["status"],
                 "current_handler": routing.display_name(c["current_level"]),
                 "days_overdue": max(0, int(elapsed - threshold)),
@@ -97,4 +98,5 @@ def sla_escalate(conn, actor, complaint_id, data, now=None):
         if _elapsed_days(c["status_updated_at"], now) <= _threshold_days(conn):
             raise conflict("INVALID_STATE", "The complaint is not overdue.")
         updated = complaints._escalate_in_transaction(conn, actor, c, version, "SLA_ESCALATE")
-    return complaints.detail(conn, actor, updated)
+    # The SLA capability permits escalation across queues, not reading their details.
+    return complaints.summary(updated)

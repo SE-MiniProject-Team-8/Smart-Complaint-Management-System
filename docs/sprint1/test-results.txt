@@ -1,0 +1,74 @@
+test_error_shape_headers_and_content_checks (test_app.ApiConventionTests.test_error_shape_headers_and_content_checks) ... ok
+test_readiness_check_exposes_no_records (test_app.ApiConventionTests.test_readiness_check_exposes_no_records) ... ok
+test_secret_key_is_required (test_app.ApiConventionTests.test_secret_key_is_required) ... ok
+test_appeal_preconditions (test_app.AppealTests.test_appeal_preconditions) ... ok
+test_database_enforces_one_appeal_even_if_service_check_is_bypassed (test_app.AppealTests.test_database_enforces_one_appeal_even_if_service_check_is_bypassed) ... ok
+test_dean_rejection_appeal_stays_at_dean_for_final_review (test_app.AppealTests.test_dean_rejection_appeal_stays_at_dean_for_final_review) ... ok
+test_second_appeal_is_blocked (test_app.AppealTests.test_second_appeal_is_blocked) ... ok
+test_single_appeal_moves_up_one_level (test_app.AppealTests.test_single_appeal_moves_up_one_level) ... ok
+test_audit_has_no_write_routes (test_app.AuditTests.test_audit_has_no_write_routes) ... ok
+test_audit_rows_are_immutable_in_the_database (test_app.AuditTests.test_audit_rows_are_immutable_in_the_database) ... ok
+test_every_accepted_action_adds_exactly_one_audit_entry (test_app.AuditTests.test_every_accepted_action_adds_exactly_one_audit_entry) ... ok
+test_history_is_complete_ordered_and_scoped (test_app.AuditTests.test_history_is_complete_ordered_and_scoped) ... ok
+test_csrf_login_rotation_and_logout (test_app.AuthTests.test_csrf_login_rotation_and_logout) ... ok
+test_password_is_salted_hash_and_never_returned (test_app.AuthTests.test_password_is_salted_hash_and_never_returned) ... ok
+test_protected_routes_require_login (test_app.AuthTests.test_protected_routes_require_login) ... ok
+test_registration_cannot_choose_role_and_duplicates_conflict (test_app.AuthTests.test_registration_cannot_choose_role_and_duplicates_conflict) ... ok
+test_unknown_id_and_wrong_password_are_indistinguishable (test_app.AuthTests.test_unknown_id_and_wrong_password_are_indistinguishable) ... ok
+test_invisible_complaint_looks_like_missing (test_app.DashboardTests.test_invisible_complaint_looks_like_missing) ... ok
+test_pagination_and_filter_validation (test_app.DashboardTests.test_pagination_and_filter_validation) ... ok
+test_role_scoped_dashboards (test_app.DashboardTests.test_role_scoped_dashboards) ... ok
+test_handler_view_hides_student_identity (test_app.FeedbackTests.test_handler_view_hides_student_identity) ... ok
+test_only_resolved_complaints_accept_feedback (test_app.FeedbackTests.test_only_resolved_complaints_accept_feedback) ... ok
+test_other_student_cannot_submit_or_read (test_app.FeedbackTests.test_other_student_cannot_submit_or_read) ... ok
+test_rating_validation_and_single_feedback (test_app.FeedbackTests.test_rating_validation_and_single_feedback) ... ok
+test_escalation_chain_and_dean_ceiling (test_app.HandlerActionTests.test_escalation_chain_and_dean_ceiling) ... ok
+test_only_currently_assigned_level_may_act (test_app.HandlerActionTests.test_only_currently_assigned_level_may_act) ... ok
+test_reject_records_reason_and_level (test_app.HandlerActionTests.test_reject_records_reason_and_level) ... ok
+test_resolve_requires_remarks_and_records_audit (test_app.HandlerActionTests.test_resolve_requires_remarks_and_records_audit) ... ok
+test_stale_version_is_rejected_without_changes (test_app.HandlerActionTests.test_stale_version_is_rejected_without_changes) ... ok
+test_terminal_complaints_cannot_be_actioned (test_app.HandlerActionTests.test_terminal_complaints_cannot_be_actioned) ... ok
+test_browser_form_has_clear_labels_and_field_specific_errors (test_app.Issue11UsabilityPerformanceTests.test_browser_form_has_clear_labels_and_field_specific_errors) ... ok
+test_browser_keyboard_and_form_attributes (test_app.Issue11UsabilityPerformanceTests.test_browser_keyboard_and_form_attributes) ... ok
+test_browser_page_structure_accessibility_and_responsiveness (test_app.Issue11UsabilityPerformanceTests.test_browser_page_structure_accessibility_and_responsiveness) ... ok
+test_dashboard_performance_target_under_two_seconds (test_app.Issue11UsabilityPerformanceTests.test_dashboard_performance_target_under_two_seconds) ... ok
+test_empty_complaints_query_optimization (test_app.Issue11UsabilityPerformanceTests.test_empty_complaints_query_optimization) ... ok
+test_performance_indexes_exist (test_app.Issue11UsabilityPerformanceTests.test_performance_indexes_exist) ... ok
+test_repeated_submissions_stay_under_target (test_app.Issue11UsabilityPerformanceTests.test_repeated_submissions_stay_under_target) ... ok
+test_valid_complaint_is_confirmed_within_three_seconds (test_app.Issue11UsabilityPerformanceTests.test_valid_complaint_is_confirmed_within_three_seconds) ... ok
+test_appeal_target (test_app.ModuleBoundaryTests.test_appeal_target) ... ok
+test_initial_level (test_app.ModuleBoundaryTests.test_initial_level) ... ok
+test_next_level_and_dean_ceiling (test_app.ModuleBoundaryTests.test_next_level_and_dean_ceiling) ... ok
+test_init_db_is_idempotent_and_keeps_data (test_app.PersistenceTests.test_init_db_is_idempotent_and_keeps_data) ... ok
+test_records_survive_application_restart (test_app.PersistenceTests.test_records_survive_application_restart) ... ok
+test_staff_session_state_not_trusted_from_cookie (test_app.PersistenceTests.test_staff_session_state_not_trusted_from_cookie) ... ok
+test_check_lists_overdue_without_changing_state (test_app.SlaTests.test_check_lists_overdue_without_changing_state) ... ok
+test_requires_explicit_permission (test_app.SlaTests.test_requires_explicit_permission) ... ok
+test_sla_escalation_denied_without_permission (test_app.SlaTests.test_sla_escalation_denied_without_permission) ... ok
+test_sla_escalation_is_scoped_audited_and_capped (test_app.SlaTests.test_sla_escalation_is_scoped_audited_and_capped) ... ok
+test_terminal_complaints_are_not_listed (test_app.SlaTests.test_terminal_complaints_are_not_listed) ... ok
+test_failed_write_rolls_back_everything (test_app.SubmissionTests.test_failed_write_rolls_back_everything) ... ok
+test_invalid_input_leaves_no_records (test_app.SubmissionTests.test_invalid_input_leaves_no_records) ... ok
+test_only_students_submit (test_app.SubmissionTests.test_only_students_submit) ... ok
+test_severity_routing (test_app.SubmissionTests.test_severity_routing) ... ok
+test_submission_writes_complaint_history_audit_and_notice_together (test_app.SubmissionTests.test_submission_writes_complaint_history_audit_and_notice_together) ... ok
+test_unexpected_error_rolls_back_and_hides_details (test_app.SubmissionTests.test_unexpected_error_rolls_back_and_hides_details) ... unhandled RuntimeError request_id=e36d1dcd252b
+ok
+test_dean_final_review_exposes_no_escalation_or_second_appeal (test_sprint_workflows.AppealWorkflowTests.test_dean_final_review_exposes_no_escalation_or_second_appeal) ... ok
+test_rejected_complaint_moves_between_role_queues_and_cannot_be_appealed_twice (test_sprint_workflows.AppealWorkflowTests.test_rejected_complaint_moves_between_role_queues_and_cannot_be_appealed_twice) ... ok
+test_stale_appeal_leaves_no_duplicate_or_partial_writes (test_sprint_workflows.AppealWorkflowTests.test_stale_appeal_leaves_no_duplicate_or_partial_writes) ... ok
+test_dashboard_queries_with_250_records_stay_under_two_seconds (test_sprint_workflows.DashboardWorkflowTests.test_dashboard_queries_with_250_records_stay_under_two_seconds) ... ok
+test_three_pages_are_complete_scoped_and_filterable (test_sprint_workflows.DashboardWorkflowTests.test_three_pages_are_complete_scoped_and_filterable) ... ok
+test_login_and_reload_expose_only_effective_sla_permission (test_sprint_workflows.SessionCapabilityTests.test_login_and_reload_expose_only_effective_sla_permission) ... ok
+test_logout_bootstrap_allows_a_different_account_to_sign_in (test_sprint_workflows.SessionCapabilityTests.test_logout_bootstrap_allows_a_different_account_to_sign_in) ... ok
+test_non_dean_cannot_use_sla_even_if_provisioned_with_flag (test_sprint_workflows.SessionCapabilityTests.test_non_dean_cannot_use_sla_even_if_provisioned_with_flag) ... ok
+test_permission_revocation_takes_effect_during_existing_session (test_sprint_workflows.SessionCapabilityTests.test_permission_revocation_takes_effect_during_existing_session) ... ok
+test_configured_threshold_and_strict_boundary (test_sprint_workflows.SlaWorkflowTests.test_configured_threshold_and_strict_boundary) ... ok
+test_review_returns_version_for_scoped_escalation_without_detail_access (test_sprint_workflows.SlaWorkflowTests.test_review_returns_version_for_scoped_escalation_without_detail_access) ... ok
+test_sla_check_requires_csrf_and_does_not_mutate (test_sprint_workflows.SlaWorkflowTests.test_sla_check_requires_csrf_and_does_not_mutate) ... ok
+test_stale_sla_action_cannot_move_complaint_twice (test_sprint_workflows.SlaWorkflowTests.test_stale_sla_action_cannot_move_complaint_twice) ... ok
+
+----------------------------------------------------------------------
+Ran 68 tests in 2.206s
+
+OK
