@@ -38,6 +38,29 @@ Key improvements delivered in Issue #11:
   - Zero-result early return in pagination queries avoiding unnecessary sorted queries.
   - Verified performance targets: Dashboard query latency < 2.0 seconds and submission confirmation latency < 3.0 seconds under single and repeated operations.
 
+## Sprint 1 — Dashboards, appeals and SLA review
+
+- **#7 Dashboards:** Students see their own complaints; Faculty, Committee and Dean
+  accounts see their review queues. Both dashboards support status filters, refresh,
+  ten-item pages, status badges and complaint details. Staff can use the actions
+  authorized for the complaint's current review level.
+- **#8 Appeals:** A student can appeal an eligible rejection once, with a required
+  justification. The complaint reopens at the next review level; a Dean rejection
+  stays with the Dean for final review. Stale actions refresh the details and
+  preserve the explanation for an explicit retry.
+- **#9 SLA review:** Only a Dean provisioned with `--sla-review` sees the manual
+  overdue check. Results show the configured threshold, current handler and days
+  overdue. One click escalates an active overdue complaint by one level, with a
+  fresh version check and no escalation beyond the Dean. The default threshold is
+  seven days, stored in `settings.sla_threshold_days`; a configuration screen is
+  not included. There is no background escalation scheduler.
+
+Session responses include the effective `can_review_sla` permission for the UI;
+every action is independently authorized on the server. SLA escalation returns
+summary fields only and does not grant access to another queue's complaint details.
+
+See [Sprint 1 verification and screenshots](docs/sprint1/verification.md).
+
 ## Setup
 
 ```bash
