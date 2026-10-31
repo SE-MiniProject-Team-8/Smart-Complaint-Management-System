@@ -162,7 +162,17 @@ async function api(path, method='GET', data=undefined) {
 }
 
 function setAuthenticated(authenticated, role='Student', universityId='') {
-  sessionEpoch += 1;
+  sessionEpoch += 1;  
+  const notificationList = $('notifications-list');
+  if (notificationList) notificationList.replaceChildren();
+
+  showMessage('notifications-message', '');
+
+  const notificationLoading = $('notifications-loading');
+  if (notificationLoading) notificationLoading.hidden = true;
+
+  const notificationRefresh = $('refresh-notifications');
+  if (notificationRefresh) notificationRefresh.disabled = false;
   currentTrackingPage = currentStaffPage = 1;
   $('complaints-list').replaceChildren();
   $('staff-queue-list').replaceChildren();
@@ -196,6 +206,7 @@ function setAuthenticated(authenticated, role='Student', universityId='') {
       $('staff-card').hidden = false;
       $('staff-role-label').textContent = role;
       loadStaffQueue();
+      loadNotifications();
     }
   } else {
     $('nav-tabs').hidden = true;
@@ -428,6 +439,84 @@ async function loadQueue(view, page) {
     }
   }
 }
+// Load notifications for the signed-in staff member.
+async function loadNotifications() {
+  if (!currentUser || currentUser.role === 'Student') return;
+
+  const loading = $('notifications-loading');
+  const list = $('notifications-list');
+  const refreshButton = $('refresh-notifications');
+
+  if (!loading || !list || !refreshButton) return;
+
+  const epoch = sessionEpoch;
+
+  loading.hidden = false;
+  list.setAttribute('aria-busy', 'true');
+  list.replaceChildren();
+  showMessage('notifications-message', '');
+
+  refreshButton.disabled = true;
+
+  try {
+    const result = await apiResponse(
+      '/notifications?page=1&page_size=20'
+    );
+
+    // Ignore the response if the session has changed.
+    if (epoch !== sessionEpoch) return;
+
+    if (!result.data || result.data.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <p>No notifications yet.</p>
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = result.data.map(notification => {
+      const createdAt = notification.created_at
+        ? new Date(notification.created_at).toLocaleString()
+        : 'Time unavailable';
+
+      return `
+        <article class="complaint-item">
+          <div class="complaint-item-header">
+            <span class="complaint-ref">
+              Complaint #${escapeHtml(notification.complaint_id)}
+            </span>
+          </div>
+
+          <p>${escapeHtml(notification.event)}</p>
+
+          <p class="complaint-assigned">
+            <strong>Received:</strong>
+            ${escapeHtml(createdAt)}
+          </p>
+        </article>
+      `;
+    }).join('');
+
+  } catch (error) {
+    if (epoch !== sessionEpoch) return;
+
+    list.replaceChildren();
+
+    showMessage(
+      'notifications-message',
+      `Could not load notifications: ${error.message}`,
+      'failure'
+    );
+
+  } finally {
+    if (epoch === sessionEpoch) {
+      loading.hidden = true;
+      list.setAttribute('aria-busy', 'false');
+      refreshButton.disabled = false;
+    }
+  }
+}
 
 function complaintCard(c, view) {
   const id = `${view}-${c.complaint_id}`;
@@ -454,6 +543,10 @@ for (const [view, ui] of Object.entries(views)) {
 }
 $('refresh-complaints').addEventListener('click', () => loadStudentComplaints(currentTrackingPage));
 $('refresh-staff-queue').addEventListener('click', () => loadStaffQueue(currentStaffPage));
+$('refresh-notifications').addEventListener(
+  'click',
+  loadNotifications
+);
 
 async function showDetails(complaintId, view, toggle=true) {
   const box = $(`details-${view}-${complaintId}`);
@@ -555,7 +648,15 @@ async function submitAction(button, id) {
     if (action === 'appeal') notice = `Appeal for #${id} submitted. Under Appeal Review with ${result.assigned_role}${result.final_review ? ' (final review)' : ''}.`;
     else if (action === 'feedback') notice = `Feedback for #${id} recorded. Thank you.`;
     showMessage('global-message', notice, 'success');
-    await loadQueue(view, view === 'student' ? currentTrackingPage : currentStaffPage);
+
+await loadQueue(
+  view,
+  view === 'student' ? currentTrackingPage : currentStaffPage
+);
+
+if (currentUser && currentUser.role !== 'Student') {
+  await loadNotifications();
+}
   } catch (error) {
     if (epoch !== sessionEpoch || !box.isConnected) return;
     if (error.status === 409) {
