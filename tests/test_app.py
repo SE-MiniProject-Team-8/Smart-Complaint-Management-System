@@ -345,6 +345,48 @@ class HandlerActionTests(Base):
         self.assertEqual(fac.get(f"/complaints/{c['complaint_id']}").status_code, 200)
         self.assertEqual(self.alice.post(f"/complaints/{c['complaint_id']}/resolve",
                                          {"remarks": "x", "expected_version": 2}).status_code, 403)
+    def test_allowed_actions_follow_current_assignment_and_dean_ceiling(self):
+        c = self.submit(severity="Low")
+        cid = c["complaint_id"]
+
+        # Faculty can resolve, reject, and escalate.
+        faculty = self.staff("FAC001")
+        faculty_detail = faculty.get(f"/complaints/{cid}").json["data"]
+        self.assertEqual(
+            set(faculty_detail["allowed_actions"]),
+            {"resolve", "reject", "escalate"},
+        )
+
+        # After escalation, Faculty can no longer perform handler actions.
+        escalated = faculty.post(
+            f"/complaints/{cid}/escalate", {"expected_version": 1}
+        )
+        self.assertEqual(escalated.status_code, 200)
+        faculty_detail = faculty.get(f"/complaints/{cid}").json["data"]
+        self.assertFalse(
+            {"resolve", "reject", "escalate"} & set(faculty_detail["allowed_actions"])
+        )
+
+        # Committee can escalate to the Dean.
+        committee = self.staff("GC001")
+        committee_detail = committee.get(f"/complaints/{cid}").json["data"]
+        self.assertEqual(
+            set(committee_detail["allowed_actions"]),
+            {"resolve", "reject", "escalate"},
+        )
+
+        escalated = committee.post(
+            f"/complaints/{cid}/escalate", {"expected_version": 2}
+        )
+        self.assertEqual(escalated.status_code, 200)
+
+        # Dean can resolve or reject, but cannot escalate further.
+        dean = self.staff("DEAN01")
+        dean_detail = dean.get(f"/complaints/{cid}").json["data"]
+        self.assertEqual(
+            set(dean_detail["allowed_actions"]),
+            {"resolve", "reject"},
+        )
 
     def test_escalation_chain_and_dean_ceiling(self):
         c = self.submit(severity="Low")
