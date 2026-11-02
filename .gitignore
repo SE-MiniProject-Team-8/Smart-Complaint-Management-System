@@ -6,3 +6,5 @@ instance/
 *.db-wal
 *.db-shm
 .venv/
+.browser-tools/
+backups/
