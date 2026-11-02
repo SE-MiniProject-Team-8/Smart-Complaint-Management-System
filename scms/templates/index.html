@@ -662,6 +662,16 @@ button.btn-sm {
     <p class="muted">You are signed in with a staff account (<span id="staff-role-label"></span>).</p>
     <p class="hint">This queue shows complaints at your review level. Open a complaint to see its details and available actions.</p>
     <div id="staff-queue-container">
+    <!-- In-app notifications -->
+    <section class="card" id="notifications-card" aria-labelledby="notifications-title">
+      <div class="list-toolbar">
+        <h3 id="notifications-title" style="margin:0; font-size:1.1rem;">In-App Notifications</h3>
+        <button type="button" class="secondary btn-sm" id="refresh-notifications">Refresh Notifications</button>
+      </div>
+      <p id="notifications-loading" class="hint" role="status" hidden>Loading notifications...</p>
+      <div id="notifications-message" role="status" aria-live="polite"></div>
+      <div id="notifications-list" class="complaints-grid" role="region" aria-label="Notifications"></div>
+    </section>
       <div class="list-toolbar">
         <h3 style="margin:0; font-size:1.1rem;">Assigned Complaints Queue</h3>
         <div class="filter-group">
