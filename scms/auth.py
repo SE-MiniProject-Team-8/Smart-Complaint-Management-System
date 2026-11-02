@@ -119,10 +119,15 @@ def load_session(conn, session_id):
 def login(conn, old_session_id, university_id, password):
     """Verify credentials, then rotate session id and CSRF token."""
     user = authenticate(conn, university_id, password)
+    # Rotate both tokens in one transaction: a failed insert must not destroy
+    # the caller's existing session (including its pre-login CSRF token).
+    session_id, csrf = _new_token(), _new_token()
+    expires = (datetime.now(timezone.utc) + SESSION_LIFETIME).strftime("%Y-%m-%dT%H:%M:%SZ")
     with transaction(conn):
         if old_session_id:
             repo.delete_session(conn, old_session_id)
-    session_id, csrf = create_session(conn, user["user_id"])
+        repo.delete_expired_sessions(conn, utc_now())
+        repo.insert_session(conn, session_id, user["user_id"], csrf, expires)
     return user, session_id, csrf
 
 
