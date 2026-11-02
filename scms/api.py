@@ -14,7 +14,7 @@ from werkzeug.exceptions import HTTPException
 
 from . import audit, auth, complaints, db, feedback, queries
 from .errors import AppError
-from .validation import paging
+from .validation import check_unknown, paging, raise_if_errors, text
 
 bp = Blueprint("api", __name__)
 request_log = logging.getLogger("scms.request")
@@ -100,8 +100,15 @@ def session_info():
 @bp.post("/session")
 def login():
     data = body()
+    errors = {}
+    check_unknown(data, {"university_id", "password"}, errors)
+    university_id = text(data, "university_id", 20, errors)
+    password = data.get("password")
+    if not isinstance(password, str) or not password:
+        errors["password"] = "Password is required."
+    raise_if_errors(errors)
     user, session_id, csrf = auth.login(get_db(), session.get("sid"),
-                                        data.get("university_id"), data.get("password"))
+                                        university_id, password)
     session["sid"] = session_id
     return ok({"user_id": user["user_id"], "role": user["role"],
                "university_id": user["university_id"],
