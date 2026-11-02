@@ -60,6 +60,12 @@ def current_actor():
 @bp.before_request
 def guard():
     g.session_row = auth.load_session(get_db(), session.get("sid"))
+    # Authenticate protected reads AND writes before checking their CSRF token.
+    # Expired sessions must produce 401 so the UI clears private views and
+    # obtains a fresh pre-login session, rather than getting stuck on 403.
+    public = {"api.register", "api.login", "api.session_info"}
+    if request.endpoint not in public and request.method != "OPTIONS":
+        current_actor()
     if request.method in UNSAFE_METHODS:
         row = g.session_row
         if row is None:
