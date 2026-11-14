@@ -1,0 +1,12 @@
+[run]
+branch = True
+source = scms
+
+[report]
+show_missing = True
+skip_empty = True
+# Fails the build if line+branch coverage drops below this. Measured 97% on 15-11-2026.
+fail_under = 90
+
+[html]
+directory = htmlcov
