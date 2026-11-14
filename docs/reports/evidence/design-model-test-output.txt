@@ -1,0 +1,16 @@
+# python -m unittest test_scms -v
+test_it_6_01_audit_log_generation (test_scms.TestSCMSDeliverable.test_it_6_01_audit_log_generation) ... ok
+test_ut_1_01_valid_registration (test_scms.TestSCMSDeliverable.test_ut_1_01_valid_registration) ... ok
+test_ut_1_03_invalid_credentials_generic_message (test_scms.TestSCMSDeliverable.test_ut_1_03_invalid_credentials_generic_message) ... ok
+test_ut_2_02_mandatory_fields_rejection (test_scms.TestSCMSDeliverable.test_ut_2_02_mandatory_fields_rejection) ... ok
+test_ut_3_routing_logic (test_scms.TestSCMSDeliverable.test_ut_3_routing_logic) ... ok
+test_ut_4_01_resolve_remarks_mandatory (test_scms.TestSCMSDeliverable.test_ut_4_01_resolve_remarks_mandatory) ... ok
+test_ut_4_03_escalation_ceiling (test_scms.TestSCMSDeliverable.test_ut_4_03_escalation_ceiling) ... ok
+test_ut_5_02_prevent_second_appeal (test_scms.TestSCMSDeliverable.test_ut_5_02_prevent_second_appeal) ... ok
+test_ut_8_sla_overdue_flagging (test_scms.TestSCMSDeliverable.test_ut_8_sla_overdue_flagging) ... ok
+test_ut_9_01_feedback_score_validation (test_scms.TestSCMSDeliverable.test_ut_9_01_feedback_score_validation) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.000s
+
+OK
