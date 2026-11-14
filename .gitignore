@@ -8,3 +8,7 @@ instance/
 .venv/
 .browser-tools/
 backups/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml

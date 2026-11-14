@@ -190,6 +190,18 @@ authorization, immutable audit and workflows. The second tests the original
 in-memory simulation. These tests supply their own secrets and disposable
 databases; they do not use your app's complaints database or require its key.
 
+To measure line and branch coverage (CI fails below 90 %):
+
+```sh
+python -m pip install -r requirements-dev.txt
+python -m coverage run -m unittest discover -s tests -v
+python -m coverage report
+python -m coverage html   # open htmlcov/index.html
+```
+
+`python tests/measure_performance.py` times submissions and dashboard reads with
+250 complaints. Results are in [docs/reports](docs/reports/).
+
 With Node.js 22 installed:
 
 ```sh
@@ -272,8 +284,12 @@ in one transaction. Failed writes roll back; success is reported after commit.
 Permissions are enforced server-side, not just by hidden UI controls. API routes
 are under `/api/v1`; `/healthz` is a minimal readiness check.
 
-References: [SRS](SRS.docx), [architecture](Member3-Architecture/),
-[software design](Member%204/), and [test plan](SCMS_Test_Plan_2.0.docx).
+References: [SRS v3.0](docs/SRS_v3.0.docx),
+[Software Architecture and Design Specification v2.0](docs/SCMS_SAD_v2.0.docx),
+[Test Plan v3.0](docs/SCMS_Test_Plan_v3.0.docx), the
+[test and coverage reports](docs/reports/) and
+[plan-versus-delivery deviations](docs/deviations.md). See [docs/README.md](docs/README.md)
+for the full list; superseded versions are in [docs/archive](docs/archive/).
 
 ## Scope and deployment
 
