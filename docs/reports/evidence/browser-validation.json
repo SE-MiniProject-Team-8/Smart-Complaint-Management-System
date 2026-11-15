@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "Student registration and automatic login",
+    "Field-specific invalid submission errors",
+    "Low submission, unique reference, student tracking, safe audit display",
+    "Faculty queue, notification, resolution",
+    "Resolved-only student feedback",
+    "Medium routing, rejection, single appeal, Committee-to-Dean escalation, Dean ceiling",
+    "High routing and Dean-level final appeal",
+    "Manual SLA review and authorized cross-queue escalation",
+    "Mobile viewport without horizontal overflow",
+    "Expired-session recovery clears private UI"
+  ],
+  "pageErrors": []
+}

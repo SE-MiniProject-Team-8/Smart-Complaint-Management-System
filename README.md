@@ -8,6 +8,24 @@ Dean handle them through the specified escalation hierarchy.
 Flask serves both the browser interface and API. No separate frontend build,
 Node server, MySQL/PostgreSQL installation, or external email service is needed.
 
+## Sprint Demos
+
+### Sprint 1 (1:24)
+
+Role-based dashboards, student appeals, and manual SLA review.
+
+https://github.com/user-attachments/assets/971a2f21-8024-4ac0-8acd-7d328d12eba8
+
+[Sprint 1 MP4](docs/videos/sprint1-demo.mp4)
+
+### Sprint 2 (2:58)
+
+Student sign-in and complaint submission, severity-based routing, staff resolution and escalation, and the audit trail.
+
+https://github.com/user-attachments/assets/1124ea28-4d55-4ef5-878b-427d5cb39703
+
+[Sprint 2 MP4](docs/videos/sprint2-demo.mp4)
+
 ## Prerequisites
 
 - Git, Python **3.12**, and a modern browser. CI verifies Python 3.12.
@@ -190,6 +208,18 @@ authorization, immutable audit and workflows. The second tests the original
 in-memory simulation. These tests supply their own secrets and disposable
 databases; they do not use your app's complaints database or require its key.
 
+To measure line and branch coverage (CI fails below 90 %):
+
+```sh
+python -m pip install -r requirements-dev.txt
+python -m coverage run -m unittest discover -s tests -v
+python -m coverage report
+python -m coverage html   # open htmlcov/index.html
+```
+
+`python tests/measure_performance.py` times submissions and dashboard reads with
+250 complaints. Results are in [docs/reports](docs/reports/).
+
 With Node.js 22 installed:
 
 ```sh
@@ -236,8 +266,7 @@ GitHub Actions runs application and browser jobs on pushes and pull requests.
 You can also select **Actions → Application checks → Run workflow** on GitHub.
 CI uses Ubuntu, Python 3.12 and Node.js 22; Windows setup commands are not tested
 by a Windows CI runner. See [product verification](docs/product-verification.md)
-for results, reproduction and limits, and [Sprint 1 evidence](docs/sprint1/verification.md)
-for earlier screenshots and workload details. Mini-project performance checks do
+for results, reproduction and limits. Mini-project performance checks do
 not establish production capacity or full accessibility compliance.
 
 ## Troubleshooting
@@ -272,8 +301,11 @@ in one transaction. Failed writes roll back; success is reported after commit.
 Permissions are enforced server-side, not just by hidden UI controls. API routes
 are under `/api/v1`; `/healthz` is a minimal readiness check.
 
-References: [SRS](SRS.docx), [architecture](Member3-Architecture/),
-[software design](Member%204/), and [test plan](SCMS_Test_Plan_2.0.docx).
+References: [SRS v3.0](docs/SRS_v3.0.docx),
+[Software Architecture and Design Specification v2.0](docs/SCMS_SAD_v2.0.docx),
+[Test Plan v3.0](docs/SCMS_Test_Plan_v3.0.docx), the
+[test and coverage reports](docs/reports/). See the [documentation index](docs/README.md)
+for the full list. Superseded versions are in [docs/archive](docs/archive/).
 
 ## Scope and deployment
 
