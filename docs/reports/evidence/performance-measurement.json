@@ -1,0 +1,21 @@
+{
+ "records": 250,
+ "submission": {
+  "n": 250,
+  "median_ms": 2.75,
+  "p95_ms": 4.03,
+  "max_ms": 4.78
+ },
+ "faculty_dashboard": {
+  "n": 30,
+  "median_ms": 1.31,
+  "p95_ms": 1.69,
+  "max_ms": 1.79
+ },
+ "student_dashboard_last_page": {
+  "n": 30,
+  "median_ms": 1.12,
+  "p95_ms": 1.52,
+  "max_ms": 1.58
+ }
+}

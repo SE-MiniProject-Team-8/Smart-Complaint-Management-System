@@ -1,0 +1,17 @@
+Name                 Stmts   Miss Branch BrPart  Cover   Missing
+----------------------------------------------------------------
+scms/__init__.py        24      0      4      0   100%
+scms/api.py            176      2     32      2    98%   45, 73
+scms/audit.py           11      0      0      0   100%
+scms/auth.py           120      1     30      2    98%   127->129, 145
+scms/cli.py             23      0      0      0   100%
+scms/complaints.py     132      5     30      3    95%   48, 147, 184, 207-208
+scms/db.py              51      0      2      0   100%
+scms/errors.py          17      0      0      0   100%
+scms/feedback.py        32      2      8      2    90%   19, 45
+scms/queries.py         60      2     16      3    93%   69->67, 95, 97
+scms/repository.py      72      1     10      1    98%   103
+scms/routing.py         23      0      6      0   100%
+scms/validation.py      67      0     32      1    99%   49->51
+----------------------------------------------------------------
+TOTAL                  808     13    170     14    97%

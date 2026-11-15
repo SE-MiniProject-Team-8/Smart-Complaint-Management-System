@@ -1,3 +1,11 @@
+"""Design-stage model tests (Test Plan v2.0, UT/IT cases).
+
+Written before the application existed, these tests exercise SCMSCore, a
+small in-file model of the SRS rules. They do NOT import or test the scms
+package, so they are excluded from coverage. The same rules are verified
+against the real Flask + SQLite application in tests/ (see the mapping in
+docs/reports/Unit_Testing_Report.md). Kept for traceability to Test Plan v2.0.
+"""
 import unittest
 from datetime import datetime, timedelta
 
