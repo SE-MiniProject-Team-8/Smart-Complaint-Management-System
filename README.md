@@ -8,7 +8,23 @@ Dean handle them through the specified escalation hierarchy.
 Flask serves both the browser interface and API. No separate frontend build,
 Node server, MySQL/PostgreSQL installation, or external email service is needed.
 
-[Sprint 1 demo](docs/videos/sprint1-demo.mp4) · [Sprint 2 demo](docs/videos/sprint2-demo.mp4)
+## Sprint Demos
+
+### Sprint 1 (1:24)
+
+Role-based dashboards, student appeals, and manual SLA review.
+
+https://github.com/user-attachments/assets/971a2f21-8024-4ac0-8acd-7d328d12eba8
+
+[Sprint 1 MP4](docs/videos/sprint1-demo.mp4)
+
+### Sprint 2 (2:58)
+
+Student sign-in and complaint submission, severity-based routing, staff resolution and escalation, and the audit trail.
+
+https://github.com/user-attachments/assets/1124ea28-4d55-4ef5-878b-427d5cb39703
+
+[Sprint 2 MP4](docs/videos/sprint2-demo.mp4)
 
 ## Prerequisites
 
